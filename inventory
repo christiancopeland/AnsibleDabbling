@@ -1,2 +1,9 @@
+
+[web_servers]
+club@192.168.50.80 
+
+[db_servers]
+club@192.168.50.214 
+
+[file_servers]
 club@192.168.50.80
-club@192.168.50.214

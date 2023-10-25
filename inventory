@@ -7,3 +7,9 @@ club@192.168.50.214
 
 [file_servers]
 club@192.168.50.80
+
+[workstations]
+club@192.168.50.58
+club@192.168.50.237
+club@192.168.50.124
+

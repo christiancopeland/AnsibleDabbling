@@ -1,0 +1,41 @@
+- name: install apache and php packages for Ubuntu web servers
+  tags: apache,apache2,ubuntu
+  apt:
+    name:
+      - apache2
+      - libapache2-mod-php
+    state: latest
+  when: ansible_distribution == "Ubuntu"
+
+- name: start apache2 (Ubuntu)
+  tags: apache,ubuntu,apacheservice
+  service:
+    name: apache2
+    state: started
+    enabled: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: change timeout in apache2 config
+  tags: apache2,apache,configs
+  lineinfile:
+    path: /etc/apache2/apache2.conf
+    regexp: '^Timeout'
+    line: Timeout 350
+  when: ansible_distribution == "Ubuntu"
+  register: apacheconfig
+
+- name: restart apache2
+  tags: apache,configs
+  service:
+    name: apache2
+    state: restarted
+  when: apacheconfig.changed
+
+- name: copy default html file for site
+  tags: apache,apache2,website
+  copy:
+    src: default_site.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+    mode: 0644

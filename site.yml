@@ -11,6 +11,16 @@
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
 
+  - name: enable ssh connections for remote management
+    tags: ssh
+    service:
+      name: ssh
+      state: started
+      enabled: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+
 - hosts: workstations
   become: true
   tasks:
@@ -43,6 +53,30 @@
       state: latest
     when: ansible_distribution == "Ubuntu"
 
+  - name: start apache2 (Ubuntu)
+    tags: apache,ubuntu,apacheservice
+    service:
+      name: apache2
+      state: started
+      enabled: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: change timeout in apache2 config
+    tags: apache2,apache,configs
+    lineinfile:
+      path: /etc/apache2/apache2.conf
+      regexp: '^Timeout'
+      line: Timeout 350
+    when: ansible_distribution == "Ubuntu"
+    register: apacheconfig
+
+  - name: restart apache2
+    tags: apache,configs
+    service:
+      name: apache2
+      state: restarted
+    when: apacheconfig.changed
+
   - name: copy default html file for site
     tags: apache,apache2,website
     copy:
@@ -51,6 +85,8 @@
       owner: root
       group: root
       mode: 0644
+
+
 
 - hosts: db_servers
   become: true
@@ -62,6 +98,8 @@
       name: mariadb-server
       state: latest
     when: ansible_distribution == "Ubuntu"
+
+
 
 - hosts: file_servers
   become: true

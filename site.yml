@@ -4,11 +4,11 @@
   become: true
   pre_tasks:
 
-  - name: install updates (Ubuntu)
+  - name: update repository cache (Ubuntu)
     tags: always
     apt:
-      upgrade: dist
       update_cache: yes
+    changed_when: false
     when: ansible_distribution == "Ubuntu"
 
   - name: enable ssh connections for remote management
@@ -19,6 +19,17 @@
       enabled: yes
     when: ansible_distribution == "Ubuntu"
 
+
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: add ssh key for simone
+    tags: always
+    authorized_key:
+      user: simone
+      key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICTTmXLRpS7fAL0V66jTPPkgxGdM4M7Fd5iqRJWDdpdr rlansible"
 
 
 - hosts: workstations
